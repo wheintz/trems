@@ -100,8 +100,8 @@ if [[ ! ${RESULT} == '1' ]]; then
 	CMD="ALTER USER ${POSTGRES_USER} WITH SUPERUSER CREATEDB;"
 	su - postgres -c "psql -c \"$CMD\""
 	echo "pg_restore  $POSTGRES_DBNAME ... "
-        su - postgres -c " psql $POSTGRES_DBNAME -f /home/$POSTGRES_DUMP "
-#        su - postgres -c " pg_restore -d $POSTGRES_DBNAME /home/$POSTGRES_DUMP "
+#        su - postgres -c " psql $POSTGRES_DBNAME -f /home/$POSTGRES_DUMP "
+        su - postgres -c " pg_restore -d $POSTGRES_DBNAME /home/$POSTGRES_DUMP "
 	echo "OK !!!"
 	
 	
