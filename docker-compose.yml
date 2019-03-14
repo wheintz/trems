@@ -1,0 +1,44 @@
+version: '3.2'
+services:
+
+#---Postgres for fraxpyr-------------------------------------------- 
+  
+  postgis:
+    image: jancelin/geopoppy:postgres10-2.4-arm32_1
+    restart: always
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    entrypoint: >
+      bash -c "cp  /home/setup-database.sh / &&
+               /docker-entrypoint.sh"
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_USER=dynuser
+      - POSTGRES_PASS=dynuser
+      - POSTGRES_DBNAME=geo_dmh
+      - POSTGRES_DUMP=dmh_fraxpyr.tar
+    volumes:
+      - /home/pirate/fraxpyr/postgresql:/var/lib/postgresql
+      - /home/pirate:/home
+       
+  apache:
+    build: 
+       context: .
+       dockerfile: Dockerfile.rpi_fraxpyr
+    restart: always
+    ports:
+      - 80:80
+     
+#---Outils--------------------------------------------   
+
+  portainer:
+    image: portainer/portainer:linux-arm
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+

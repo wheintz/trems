@@ -1,0 +1,39 @@
+#FROM balenalib/raspberrypi3:stretch
+FROM balenalib/armv7hf-debian:buster-build
+
+MAINTAINER  Wilfried Heintz 
+
+RUN apt-get -y update
+RUN apt-get install -y apache2 php7.3 php7.3-pgsql unzip nano
+RUN apt-get clean && apt-get -y autoremove
+RUN a2enmod headers; a2enmod rewrite
+
+# Copy config site available
+ADD 000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Activation du shortOpenTag
+ADD php.ini /etc/php/7.3/apache2/php.ini
+
+# Activ site
+RUN a2ensite 000-default.conf
+
+#Start apache2
+ADD start.sh /start.sh
+RUN chmod 0755 /start.sh
+CMD /start.sh
+            
+# Install Fraxpyr
+ADD fraxpyr_rpi.zip /var/www/html
+ADD dmh.zip /var/www/html/
+
+RUN unzip /var/www/html/fraxpyr_rpi.zip -d /var/www/html/ && \
+    rm /var/www/html/fraxpyr_rpi.zip && \
+    unzip /var/www/html/dmh.zip -d /var/www/html/ && \
+    rm /var/www/html/dmh.zip 
+           
+# Droits
+RUN chown -hR www-data:users /var/www/html/fraxpyr_rpi && \
+    sudo chmod -R 775 /var/www/html/fraxpyr_rpi && \
+    chown -hR www-data:users /var/www/html/dmh && \
+    sudo chmod -R 775 /var/www/html/dmh
+
